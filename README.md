@@ -15,7 +15,7 @@
 - Portal tiles will telport the player to a different random portal on the map.
 
 # Level Configuration
-- Levels designs are read from txt files specified in config.json, which also contains the cooldown for shooting fireballs and gremlin projectiles and for each level, and number of lives.
+- Levels designs are read from txt files specified in config.json, which also contains the cooldown for shooting fireballs and gremlin projectiles for each level, and number of lives.
 - X = stone walls
 - B = brick walls
 - G = gremlin starting space
