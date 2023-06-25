@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FromPlayer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">FromPlayer.java</span></div><h1>FromPlayer.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import java.util.ArrayList;
+
+public abstract class FromPlayer extends MovingObject {
+
+    protected ArrayList&lt;Gremlin&gt; gremlins;
+    private ArrayList&lt;Slime&gt; slimes;
+    protected Gremlin collidedGremlin;
+    protected Slime collidedSlime;
+
+    public FromPlayer(int x, int y, ArrayList&lt;StationaryObject&gt; stonewalls, ArrayList&lt;Brickwall&gt; brickwalls, int speed, ArrayList&lt;Gremlin&gt; gremlins, ArrayList&lt;Slime&gt; slimes) {
+<span class="fc" id="L13">        super(x, y, stonewalls, brickwalls, speed);</span>
+<span class="fc" id="L14">        this.gremlins = gremlins;</span>
+<span class="fc" id="L15">        this.slimes = slimes;</span>
+<span class="fc" id="L16">    }</span>
+
+    protected boolean gremlinCollision() {
+<span class="nc" id="L19">        boolean collided = false;</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">        for (Gremlin gremlin : this.gremlins) {</span>
+<span class="nc" id="L21">            int[] gremlinSides = {gremlin.getX(), gremlin.getY(), gremlin.getX()+App.SPRITESIZE, gremlin.getY()+App.SPRITESIZE};</span>
+<span class="nc bnc" id="L22" title="All 2 branches missed.">            if (obstacleCollision(gremlinSides, &quot;touching&quot;)) {</span>
+<span class="nc" id="L23">                this.collidedGremlin = gremlin;</span>
+<span class="nc" id="L24">                collided = true;</span>
+<span class="nc" id="L25">                break;</span>
+            }
+<span class="nc" id="L27">        }</span>
+<span class="nc" id="L28">        return collided;</span>
+    }
+
+    protected boolean slimeCollision() {
+<span class="nc" id="L32">        boolean collided = false;</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        for (Slime slime : this.slimes) {</span>
+<span class="nc" id="L34">            int[] slimeSides = {slime.getX(), slime.getY(), slime.getX()+App.SPRITESIZE, slime.getY()+App.SPRITESIZE};</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">            if (obstacleCollision(slimeSides, &quot;touching&quot;)) {</span>
+<span class="nc" id="L36">                this.collidedSlime = slime;</span>
+<span class="nc" id="L37">                collided = true;</span>
+<span class="nc" id="L38">                break;</span>
+            }
+<span class="nc" id="L40">        }</span>
+<span class="nc" id="L41">        return collided;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="gremlins.GremlinTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2022-10-25T11:47:54" hostname="Cohens-Air" time="0.1">
+  <properties/>
+  <testcase name="collisionWithNoDirectionsTest()" classname="gremlins.GremlinTest" time="0.001"/>
+  <testcase name="getFrozenTimerTest()" classname="gremlins.GremlinTest" time="0.001"/>
+  <testcase name="getDirectionTest()" classname="gremlins.GremlinTest" time="0.001"/>
+  <testcase name="constructor()" classname="gremlins.GremlinTest" time="0.0"/>
+  <testcase name="movementTest()" classname="gremlins.GremlinTest" time="0.001"/>
+  <testcase name="killTest()" classname="gremlins.GremlinTest" time="0.0"/>
+  <testcase name="collisionWithOneDirectionTest1()" classname="gremlins.GremlinTest" time="0.001"/>
+  <testcase name="collisionWithOneDirectionTest2()" classname="gremlins.GremlinTest" time="0.0"/>
+  <testcase name="collisionWithTwoDirectionsTest()" classname="gremlins.GremlinTest" time="0.011"/>
+  <testcase name="freezeTest()" classname="gremlins.GremlinTest" time="0.001"/>
+  <testcase name="giveWizardTest()" classname="gremlins.GremlinTest" time="0.001"/>
+  <testcase name="getDirectionIndexTest()" classname="gremlins.GremlinTest" time="0.0"/>
+  <testcase name="getFrozenTest()" classname="gremlins.GremlinTest" time="0.003"/>
+  <testcase name="resetFreezeTest()" classname="gremlins.GremlinTest" time="0.003"/>
+  <testcase name="frozenTest()" classname="gremlins.GremlinTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

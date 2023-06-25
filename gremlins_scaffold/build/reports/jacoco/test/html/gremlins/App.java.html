@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>App.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">App.java</span></div><h1>App.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import processing.core.PApplet;
+import processing.core.PImage;
+import processing.data.JSONObject;
+import processing.data.JSONArray;
+
+import java.util.*;
+import java.io.*;
+
+
+public class App extends PApplet {
+
+    public static final int WIDTH = 720;
+    public static final int HEIGHT = 720;
+    public static final int SPRITESIZE = 20;
+    public static final int BOTTOMBAR = 60;
+    public static final int FPS = 60;
+
+<span class="fc" id="L20">    public static final Random randomGenerator = new Random();</span>
+
+    protected String configPath;
+    protected JSONObject conf;
+    protected JSONArray levels;
+    protected int numLevels;
+    protected int lives;
+    protected int levelIndex;
+    protected double wizardCooldown;
+    protected double enemyCooldown;
+    protected int wizardTimer;
+    protected int gremlinTimer;
+    
+    protected ArrayList&lt;StationaryObject&gt; emptyspaces;
+    protected ArrayList&lt;StationaryObject&gt; stonewalls;
+    protected ArrayList&lt;Brickwall&gt; brickwalls;
+    protected ArrayList&lt;Brickwall&gt; destroyedBrickwalls;
+    protected ArrayList&lt;Fireball&gt; fireballs;
+    protected ArrayList&lt;Gremlin&gt; gremlins;
+    protected ArrayList&lt;Slime&gt; slimes;
+    protected ArrayList&lt;StationaryObject&gt; doors;
+    protected ArrayList&lt;StationaryObject&gt; portals;
+    protected Wizard wizard;
+    protected Snowflake snowflake;
+    private int wizardX;
+    private int wizardY;
+
+<span class="fc" id="L47">    public App() {</span>
+<span class="fc" id="L48">        this.configPath = &quot;config.json&quot;;</span>
+<span class="fc" id="L49">        this.conf = loadJSONObject(new File(this.configPath));</span>
+<span class="fc" id="L50">        this.levels = this.conf.getJSONArray(&quot;levels&quot;);</span>
+
+<span class="fc" id="L52">        this.numLevels = this.levels.size();</span>
+<span class="fc" id="L53">        this.lives = this.conf.getInt(&quot;lives&quot;);</span>
+<span class="fc" id="L54">        this.levelIndex = 0;</span>
+
+<span class="fc" id="L56">        this.emptyspaces = new ArrayList&lt;StationaryObject&gt;();</span>
+<span class="fc" id="L57">        this.stonewalls = new ArrayList&lt;StationaryObject&gt;();</span>
+<span class="fc" id="L58">        this.brickwalls = new ArrayList&lt;Brickwall&gt;();</span>
+<span class="fc" id="L59">        this.destroyedBrickwalls = new ArrayList&lt;Brickwall&gt;();</span>
+<span class="fc" id="L60">        this.fireballs = new ArrayList&lt;Fireball&gt;();</span>
+<span class="fc" id="L61">        this.gremlins = new ArrayList&lt;Gremlin&gt;();</span>
+<span class="fc" id="L62">        this.slimes = new ArrayList&lt;Slime&gt;();</span>
+<span class="fc" id="L63">        this.doors = new ArrayList&lt;StationaryObject&gt;();</span>
+<span class="fc" id="L64">        this.portals = new ArrayList&lt;StationaryObject&gt;();</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Initialise the setting of the window size.
+    */
+    public void settings() {
+<span class="fc" id="L71">        size(WIDTH, HEIGHT);</span>
+<span class="fc" id="L72">    }</span>
+
+    /**
+     * Load all resources such as images. Initialise the elements such as the player, enemies and map elements.
+    */
+    public void setup() {
+<span class="fc" id="L78">        frameRate(FPS);</span>
+
+<span class="fc" id="L80">        JSONObject currentLevel = this.levels.getJSONObject(levelIndex);</span>
+<span class="fc" id="L81">        String layout = currentLevel.getString(&quot;layout&quot;);</span>
+<span class="fc" id="L82">        this.wizardCooldown = currentLevel.getDouble(&quot;wizard_cooldown&quot;);</span>
+<span class="fc" id="L83">        this.enemyCooldown = currentLevel.getDouble(&quot;enemy_cooldown&quot;);</span>
+<span class="fc" id="L84">        this.wizardTimer = (int) Math.round(this.wizardCooldown * FPS) + 1;</span>
+<span class="fc" id="L85">        this.gremlinTimer = 0;</span>
+
+<span class="fc" id="L87">        this.emptyspaces.clear();</span>
+<span class="fc" id="L88">        this.stonewalls.clear();</span>
+<span class="fc" id="L89">        this.brickwalls.clear();</span>
+<span class="fc" id="L90">        this.destroyedBrickwalls.clear();</span>
+<span class="fc" id="L91">        this.fireballs.clear();</span>
+<span class="fc" id="L92">        this.gremlins.clear();;</span>
+<span class="fc" id="L93">        this.slimes.clear();</span>
+<span class="fc" id="L94">        this.doors.clear();</span>
+<span class="fc" id="L95">        this.portals.clear();</span>
+
+        try {
+<span class="fc" id="L98">            Scanner sc = new Scanner(new File(layout));</span>
+<span class="fc" id="L99">            int y = 0;</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            while (sc.hasNextLine()) {</span>
+<span class="fc" id="L101">                String line = sc.nextLine();</span>
+
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                for (int x = 0; x &lt; line.length(); x++) {</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">                    if (line.charAt(x) == &quot; &quot;.charAt(0)) {</span>
+<span class="fc" id="L105">                        StationaryObject emptyspace = new StationaryObject(x*SPRITESIZE, y*SPRITESIZE);</span>
+<span class="fc" id="L106">                        this.emptyspaces.add(emptyspace);</span>
+<span class="fc" id="L107">                    }</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">                    else if (line.charAt(x) == &quot;X&quot;.charAt(0)) {</span>
+<span class="fc" id="L109">                        StationaryObject stonewall = new StationaryObject(x*SPRITESIZE, y*SPRITESIZE);</span>
+<span class="fc" id="L110">                        stonewall.setSprite(this.loadImage(&quot;src/main/resources/gremlins/stonewall.png&quot;));</span>
+<span class="fc" id="L111">                        this.stonewalls.add(stonewall);</span>
+<span class="fc" id="L112">                    }</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">                    else if (line.charAt(x) == &quot;B&quot;.charAt(0)) {</span>
+<span class="fc" id="L114">                        Brickwall brickwall = new Brickwall(x*SPRITESIZE, y*SPRITESIZE);</span>
+<span class="fc" id="L115">                        brickwall.setSprite(this.loadImage(&quot;src/main/resources/gremlins/brickwall.png&quot;));</span>
+<span class="fc" id="L116">                        this.brickwalls.add(brickwall);</span>
+<span class="fc" id="L117">                    }</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                    else if (line.charAt(x) == &quot;G&quot;.charAt(0)) {</span>
+<span class="fc" id="L119">                        Gremlin g = new Gremlin(x*SPRITESIZE, y*SPRITESIZE, this.stonewalls, </span>
+                            this.brickwalls, this.wizard, this.emptyspaces);
+<span class="fc" id="L121">                        g.setSprite(this.loadImage(&quot;src/main/resources/gremlins/gremlin.png&quot;));</span>
+<span class="fc" id="L122">                        this.gremlins.add(g);</span>
+<span class="fc" id="L123">                        StationaryObject emptyspace = new StationaryObject(x*SPRITESIZE, y*SPRITESIZE);</span>
+<span class="fc" id="L124">                        this.emptyspaces.add(emptyspace);</span>
+<span class="fc" id="L125">                    }</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                    else if (line.charAt(x) == &quot;W&quot;.charAt(0)) {</span>
+<span class="fc" id="L127">                        this.wizardX = x*SPRITESIZE;</span>
+<span class="fc" id="L128">                        this.wizardY = y*SPRITESIZE;</span>
+<span class="fc" id="L129">                        StationaryObject emptyspace = new StationaryObject(x*SPRITESIZE, y*SPRITESIZE);</span>
+<span class="fc" id="L130">                        this.emptyspaces.add(emptyspace);</span>
+<span class="fc" id="L131">                    }</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">                    else if (line.charAt(x) == &quot;E&quot;.charAt(0)) {</span>
+<span class="fc" id="L133">                        StationaryObject door = new StationaryObject(x*SPRITESIZE, y*SPRITESIZE);</span>
+<span class="fc" id="L134">                        door.setSprite(this.loadImage(&quot;src/main/resources/gremlins/door.png&quot;));</span>
+<span class="fc" id="L135">                        this.doors.add(door);</span>
+<span class="fc" id="L136">                    }</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">                    else if (line.charAt(x) == &quot;P&quot;.charAt(0)) {</span>
+<span class="fc" id="L138">                        StationaryObject portal = new StationaryObject(x*SPRITESIZE, y*SPRITESIZE);</span>
+<span class="fc" id="L139">                        portal.setSprite(this.loadImage(&quot;src/main/resources/gremlins/portal.png&quot;));</span>
+<span class="fc" id="L140">                        this.portals.add(portal);</span>
+<span class="fc" id="L141">                    }</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">                    else if (line.charAt(x) == &quot;S&quot;.charAt(0)) {</span>
+<span class="fc" id="L143">                        this.snowflake = new Snowflake(x*SPRITESIZE, y*SPRITESIZE, this.emptyspaces);</span>
+<span class="fc" id="L144">                        this.snowflake.setSprite(this.loadImage(&quot;src/main/resources/gremlins/snowflake.png&quot;));</span>
+<span class="fc" id="L145">                        StationaryObject emptyspace = new StationaryObject(x*SPRITESIZE, y*SPRITESIZE);</span>
+<span class="fc" id="L146">                        this.emptyspaces.add(emptyspace);</span>
+                    }
+                }
+<span class="fc" id="L149">                y++;</span>
+<span class="fc" id="L150">            }</span>
+<span class="fc" id="L151">            sc.close();</span>
+<span class="nc" id="L152">        } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L153">            System.out.println(&quot;Could not find layout file.&quot;);</span>
+<span class="nc" id="L154">            System.exit(0);</span>
+<span class="fc" id="L155">        }</span>
+
+<span class="fc" id="L157">        this.wizard = new Wizard(wizardX, wizardY, this.stonewalls, this.brickwalls,</span>
+            this.gremlins, this.slimes, this.doors, this.portals, this.snowflake);
+<span class="fc" id="L159">        this.wizard.setSprite(this.loadImage(&quot;src/main/resources/gremlins/wizard1.png&quot;));</span>
+
+<span class="fc" id="L161">        Gremlin.giveNumGremlins(this.gremlins.size());</span>
+<span class="fc" id="L162">    }</span>
+
+    /**
+     * Receive key pressed signal from the keyboard.
+    */
+    public void keyPressed(){
+<span class="fc bfc" id="L168" title="All 4 branches covered.">        if (this.lives &gt; 0 &amp;&amp; this.levelIndex &lt;= this.numLevels-1) {</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">            if (this.keyCode == 37) {</span>
+<span class="fc" id="L170">                this.wizard.pressLeft();</span>
+<span class="fc" id="L171">                this.wizard.setSprite(this.loadImage(&quot;src/main/resources/gremlins/wizard0.png&quot;));</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">            } else if (this.keyCode == 38) {</span>
+<span class="fc" id="L173">                this.wizard.pressUp();</span>
+<span class="fc" id="L174">                this.wizard.setSprite(this.loadImage(&quot;src/main/resources/gremlins/wizard2.png&quot;));</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            } else if (this.keyCode == 39) {</span>
+<span class="fc" id="L176">                this.wizard.pressRight();</span>
+<span class="fc" id="L177">                this.wizard.setSprite(this.loadImage(&quot;src/main/resources/gremlins/wizard1.png&quot;));</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">            } else if (this.keyCode == 40) {</span>
+<span class="fc" id="L179">                this.wizard.pressDown();</span>
+<span class="fc" id="L180">                this.wizard.setSprite(this.loadImage(&quot;src/main/resources/gremlins/wizard3.png&quot;));</span>
+<span class="pc bpc" id="L181" title="2 of 4 branches missed.">            } else if (this.keyCode == 32 &amp;&amp; this.wizardTimer &gt;= this.wizardCooldown * FPS) {</span>
+<span class="fc" id="L182">                Fireball fireball = new Fireball(this.wizard.getX(), this.wizard.getY(),</span>
+                    this.stonewalls, this.brickwalls, this.gremlins, this.slimes,
+<span class="fc" id="L184">                    this.wizard.getDirection());</span>
+<span class="fc" id="L185">                fireball.setSprite(this.loadImage(&quot;src/main/resources/gremlins/fireball.png&quot;));</span>
+<span class="fc" id="L186">                this.fireballs.add(fireball);</span>
+<span class="fc" id="L187">                this.wizard.setFired(true);</span>
+<span class="fc" id="L188">                this.wizardTimer = 0;</span>
+<span class="fc" id="L189">            }</span>
+        }
+        else {
+<span class="fc" id="L192">            this.lives = this.conf.getInt(&quot;lives&quot;);</span>
+<span class="fc" id="L193">            this.levelIndex = 0;</span>
+<span class="fc" id="L194">            this.setup();</span>
+        }
+<span class="fc" id="L196">    }</span>
+    
+    /**
+     * Receive key released signal from the keyboard.
+    */
+    public void keyReleased(){
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        if (this.keyCode == 37) {</span>
+<span class="fc" id="L203">            this.wizard.releaseLeft();</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        } else if (this.keyCode == 38) {</span>
+<span class="fc" id="L205">            this.wizard.releaseUp();</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        } else if (this.keyCode == 39) {</span>
+<span class="fc" id="L207">            this.wizard.releaseRight();</span>
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">        } else if (this.keyCode == 40) {</span>
+<span class="fc" id="L209">            this.wizard.releaseDown();</span>
+        }
+<span class="fc" id="L211">    }</span>
+
+    /**
+     * Forms all necessary text and visual indicators/timers such as mana recharge and lives left.
+    */
+    public void drawLayout() {
+<span class="fc" id="L217">        textSize(SPRITESIZE);</span>
+<span class="fc" id="L218">        this.background(191, 153, 114);</span>
+<span class="fc" id="L219">        this.text(&quot;Lives: &quot;, 10, 695);</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        for (int i = 0; i &lt; this.lives; i++) {</span>
+<span class="fc" id="L221">            PImage lifeSprite = this.loadImage(&quot;src/main/resources/gremlins/wizard1.png&quot;);</span>
+<span class="fc" id="L222">            this.image(lifeSprite, 70+i*SPRITESIZE, 680);</span>
+        }
+<span class="fc" id="L224">        this.text(&quot;Level &quot;+(levelIndex+1)+&quot;/&quot;+this.numLevels, 190, 695);</span>
+
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        if (this.wizard.getFired()) {</span>
+<span class="fc" id="L227">            rect(620, 680, 80, 5);</span>
+<span class="pc bpc" id="L228" title="3 of 4 branches missed.">            if (this.wizardTimer &lt; this.wizardCooldown * FPS  &amp;&amp; this.wizardTimer &gt; 0) {</span>
+<span class="nc" id="L229">                float rectWidth = Math.round(80*this.wizardTimer/(this.wizardCooldown * FPS));</span>
+<span class="nc" id="L230">                fill(0);</span>
+<span class="nc" id="L231">                rect(620, 680, rectWidth, 5);</span>
+<span class="nc" id="L232">                fill(255);</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">            } else if (this.wizardTimer != 0) {</span>
+<span class="fc" id="L234">                this.wizard.setFired(false);</span>
+            }
+        }
+
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        if (Gremlin.getFrozen()) {</span>
+<span class="nc" id="L239">            textSize(SPRITESIZE/2);</span>
+<span class="nc" id="L240">            this.text(&quot;Freeze&quot;, 400, 695);</span>
+<span class="nc" id="L241">            textSize(SPRITESIZE);</span>
+<span class="nc" id="L242">            rect(400, 680, 80, 5);</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">            if (Gremlin.getFrozen()) {</span>
+<span class="nc" id="L244">                float rectWidth = 80*Gremlin.getFrozenTimer()/(5 * FPS * this.gremlins.size());</span>
+<span class="nc" id="L245">                fill(138, 207, 246);</span>
+<span class="nc" id="L246">                rect(400, 680, Math.round(rectWidth), 5);</span>
+<span class="nc" id="L247">                fill(255);</span>
+            }
+        }
+<span class="fc" id="L250">    }</span>
+
+    /**
+     * Draws all brickwalls if not destroyed, otherwise sets sprites of destroyed brickwalls.
+    */
+    public void evaluateBrickwalls() {
+<span class="fc" id="L256">        Iterator&lt;Brickwall&gt; brickItr = this.brickwalls.iterator();</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        while (brickItr.hasNext()) {</span>
+<span class="fc" id="L258">            Brickwall brickwall = brickItr.next();</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">            if (!brickwall.checkDestroyed()) {</span>
+<span class="fc" id="L260">                brickwall.draw(this);</span>
+            } else {
+<span class="fc" id="L262">                this.destroyedBrickwalls.add(brickwall);</span>
+<span class="fc" id="L263">                this.emptyspaces.add(new StationaryObject(brickwall.getX(), brickwall.getY()));</span>
+<span class="fc" id="L264">                brickItr.remove();</span>
+            }
+<span class="fc" id="L266">        }</span>
+
+<span class="fc bfc" id="L268" title="All 2 branches covered.">        for (Brickwall brickwall : this.destroyedBrickwalls) {</span>
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">            if (!brickwall.checkDestroyedFully()) {</span>
+<span class="fc" id="L270">                brickwall.setDestroyedSprite(this);</span>
+<span class="fc" id="L271">                brickwall.draw(this);</span>
+            } else {
+<span class="nc" id="L273">                brickwall = null;</span>
+            }
+<span class="fc" id="L275">        }</span>
+<span class="fc" id="L276">    }</span>
+
+    /**
+     * Ticks and draws all gremlins and spawns slimes according to enemy cooldown.
+     * Changes gremlin sprites to blue if frozen.
+    */
+    public void evaluateGremlins() {
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        for (Gremlin gremlin : this.gremlins) {</span>
+<span class="fc" id="L284">            gremlin.giveWizard(this.wizard);</span>
+<span class="fc" id="L285">            gremlin.tick();</span>
+<span class="fc" id="L286">            gremlin.draw(this);</span>
+<span class="pc bpc" id="L287" title="3 of 4 branches missed.">            if (this.gremlinTimer != 0 &amp;&amp; (int)(this.gremlinTimer % (this.enemyCooldown*FPS)) == 0 </span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">                &amp;&amp; !Gremlin.getFrozen()) {</span>
+<span class="nc" id="L289">                Slime slime = new Slime(gremlin.getX(), gremlin.getY(), this.stonewalls, </span>
+<span class="nc" id="L290">                    this.brickwalls, gremlin.getDirection());</span>
+<span class="nc" id="L291">                slime.setSprite(this.loadImage(&quot;src/main/resources/gremlins/slime.png&quot;));</span>
+<span class="nc" id="L292">                this.slimes.add(slime);</span>
+            }
+
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">            if (Gremlin.getFrozen()) {</span>
+<span class="nc" id="L296">                gremlin.setSprite(this.loadImage(&quot;src/main/resources/gremlins/gremlinFrozen.png&quot;));</span>
+            } else {
+<span class="fc" id="L298">                gremlin.setSprite(this.loadImage(&quot;src/main/resources/gremlins/gremlin.png&quot;));</span>
+            }
+<span class="fc" id="L300">        }</span>
+<span class="fc" id="L301">    }</span>
+
+    /**
+     * Ticks and draws all slimes.
+     * If they have collided, remove them from the slimes ArrayList.
+    */
+    public void evaluateSlimes() {
+<span class="fc" id="L308">        Iterator&lt;Slime&gt; slimeItr = this.slimes.iterator();</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">        while (slimeItr.hasNext()) {</span>
+<span class="fc" id="L310">            Slime slime = slimeItr.next();</span>
+<span class="pc bpc" id="L311" title="1 of 2 branches missed.">            if (!slime.getCollided()) {</span>
+<span class="nc" id="L312">                slime.tick();</span>
+<span class="nc" id="L313">                slime.draw(this);</span>
+            } else {
+<span class="fc" id="L315">                slimeItr.remove();</span>
+<span class="fc" id="L316">                slime = null;</span>
+            }
+<span class="fc" id="L318">        }</span>
+<span class="fc" id="L319">    }</span>
+
+    /**
+     * Ticks and draws all fireballs.
+     * If they have collided, remove them from the fireballs ArrayList.
+    */
+    public void evaluateFireballs() {
+<span class="fc" id="L326">        Iterator&lt;Fireball&gt; fireItr = this.fireballs.iterator();</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">        while (fireItr.hasNext()) {</span>
+<span class="fc" id="L328">            Fireball fireball = fireItr.next();</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">            if (!fireball.getCollided()) {</span>
+<span class="nc" id="L330">                fireball.tick();</span>
+<span class="nc" id="L331">                fireball.draw(this);</span>
+            } else {
+<span class="fc" id="L333">                fireItr.remove();</span>
+<span class="fc" id="L334">                fireball = null;</span>
+            }
+<span class="fc" id="L336">        }</span>
+<span class="fc" id="L337">    }</span>
+
+    /**
+     * Evalues what happens next when the wizard reaches the door.
+     * If there are still levels left, player goes to the next level.
+     * If there are no leveles left, player wins.
+    */
+    public void nextLevel() {
+<span class="fc bfc" id="L345" title="All 2 branches covered.">        if (this.levelIndex &lt; this.numLevels-1) {</span>
+<span class="fc bfc" id="L346" title="All 2 branches covered.">            if (this.wizard.getGoNextLevel()) {</span>
+<span class="fc" id="L347">                this.levelIndex++;</span>
+<span class="fc" id="L348">                this.setup();</span>
+            }
+<span class="pc bpc" id="L350" title="1 of 2 branches missed.">        } else if (this.wizard.getGoNextLevel()) {</span>
+<span class="fc" id="L351">            this.levelIndex++;</span>
+<span class="fc" id="L352">            textSize(SPRITESIZE*3);</span>
+<span class="fc" id="L353">            background(191, 153, 114);</span>
+<span class="fc" id="L354">            this.text(&quot;YOU WIN!&quot;, 200, 330);</span>
+        }
+<span class="fc" id="L356">    }</span>
+
+    /**
+     * Evaluates what happens next when the wizard loses a life.
+     * If it still has lives, simply run setup again and minus a life.
+     * If no lives are left, game over.
+    */
+    public void lostLife() {
+<span class="pc bpc" id="L364" title="1 of 4 branches missed.">        if (!this.wizard.getIsAlive() &amp;&amp; this.lives &gt; 0) {</span>
+<span class="fc" id="L365">            this.lives--;</span>
+<span class="fc" id="L366">            this.setup();</span>
+        }
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">        if (this.lives == 0) {</span>
+<span class="nc" id="L369">            textSize(SPRITESIZE*3);</span>
+<span class="nc" id="L370">            background(191, 153, 114);</span>
+<span class="nc" id="L371">            this.text(&quot;GAME OVER&quot;, 180, 330);</span>
+        }
+<span class="fc" id="L373">    }</span>
+
+
+    /**
+     * Draw all elements in the game by current frame. 
+	 */
+    public void draw() {
+<span class="fc" id="L380">        this.drawLayout();</span>
+
+<span class="fc bfc" id="L382" title="All 2 branches covered.">        for (StationaryObject portal : this.portals) {</span>
+<span class="fc" id="L383">            portal.draw(this);</span>
+<span class="fc" id="L384">        }</span>
+
+<span class="fc bfc" id="L386" title="All 2 branches covered.">        for (StationaryObject stonewall : this.stonewalls) {</span>
+<span class="fc" id="L387">            stonewall.draw(this);</span>
+<span class="fc" id="L388">        }</span>
+
+<span class="fc bfc" id="L390" title="All 2 branches covered.">        for (StationaryObject door : this.doors) {</span>
+<span class="fc" id="L391">            door.draw(this);</span>
+<span class="fc" id="L392">        }</span>
+
+<span class="fc" id="L394">        this.wizard.tick();</span>
+<span class="fc" id="L395">        this.wizard.draw(this);</span>
+<span class="fc" id="L396">        this.snowflake.tick();</span>
+<span class="fc" id="L397">        this.snowflake.draw(this);</span>
+
+<span class="fc" id="L399">        this.evaluateGremlins();</span>
+<span class="fc" id="L400">        this.evaluateSlimes();</span>
+<span class="fc" id="L401">        this.evaluateFireballs();</span>
+<span class="fc" id="L402">        this.evaluateBrickwalls();</span>
+
+<span class="fc" id="L404">        this.nextLevel();</span>
+<span class="fc" id="L405">        this.lostLife();</span>
+
+<span class="fc" id="L407">        this.wizardTimer++;</span>
+<span class="fc" id="L408">        this.gremlinTimer++;</span>
+<span class="fc" id="L409">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L412">        PApplet.main(&quot;gremlins.App&quot;);</span>
+<span class="nc" id="L413">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

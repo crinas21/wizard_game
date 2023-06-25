@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Wizard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">Wizard.java</span></div><h1>Wizard.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import java.util.ArrayList;
+
+public class Wizard extends MovingObject {
+
+    protected ArrayList&lt;Gremlin&gt; gremlins;
+    protected ArrayList&lt;Slime&gt; slimes;
+    protected ArrayList&lt;StationaryObject&gt; doors;
+    protected ArrayList&lt;StationaryObject&gt; portals;
+    protected Snowflake snowflake;
+
+    protected boolean isAlive;
+    protected boolean goNextLevel;
+    protected String facingDirection;
+    protected boolean fired;
+    protected boolean readyForPortal;
+
+    protected boolean moveLeft;
+    protected boolean moveUp;
+    protected boolean moveRight;
+    protected boolean moveDown;
+
+    // These indicate the direction needed to reach the next whole tile
+    protected boolean horizontalLeft;
+    protected boolean horizontalRight;
+    protected boolean verticalUp;
+    protected boolean verticalDown;
+
+    public Wizard(int x, int y, ArrayList&lt;StationaryObject&gt; stonewalls, 
+                ArrayList&lt;Brickwall&gt; brickwalls, ArrayList&lt;Gremlin&gt; gremlins, 
+                ArrayList&lt;Slime&gt; slimes, ArrayList&lt;StationaryObject&gt; doors, 
+                ArrayList&lt;StationaryObject&gt; portals, Snowflake snowflake) {
+<span class="fc" id="L34">        super(x, y, stonewalls, brickwalls, 2);</span>
+<span class="fc" id="L35">        this.gremlins = gremlins;</span>
+<span class="fc" id="L36">        this.slimes = slimes;</span>
+<span class="fc" id="L37">        this.doors = doors;</span>
+<span class="fc" id="L38">        this.portals = portals;</span>
+<span class="fc" id="L39">        this.snowflake = snowflake;</span>
+
+<span class="fc" id="L41">        this.isAlive = true;</span>
+<span class="fc" id="L42">        this.goNextLevel = false;</span>
+<span class="fc" id="L43">        this.facingDirection = &quot;right&quot;;</span>
+<span class="fc" id="L44">        this.fired = false;</span>
+<span class="fc" id="L45">        this.readyForPortal = true;</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Checks whether the wizard has lost a life by touching a slime or gremlin.
+    */
+    public boolean getIsAlive() {
+<span class="fc" id="L52">        return this.isAlive;</span>
+    }
+
+    /**
+     * Checks whether the wizard has reached a door.
+    */
+    public boolean getGoNextLevel() {
+<span class="fc" id="L59">        return this.goNextLevel;</span>
+    }
+
+    /**
+     * Gives the direction the wizard is facing.
+    */
+    public String getDirection() {
+<span class="fc" id="L66">        return this.facingDirection;</span>
+    }
+
+    /**
+     * Checks whether the wizard has just fired a fireball and has to wait to cooldown.
+    */
+    public boolean getFired() {
+<span class="fc" id="L73">        return this.fired;</span>
+    }
+
+    /**
+     * Sets the wizard as having fired a fireball and in need to cooldown.
+    */
+    public void setFired(boolean isFired) {
+<span class="fc" id="L80">        this.fired = isFired;</span>
+<span class="fc" id="L81">    }</span>
+
+    /**
+     * Makes the wizard move left
+    */
+    public void pressLeft() {
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (moveUp) {</span>
+<span class="fc" id="L88">            this.releaseUp();</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        } else if (moveDown) {</span>
+<span class="fc" id="L90">            this.releaseDown();</span>
+        }
+<span class="fc" id="L92">        this.moveLeft = true;</span>
+<span class="fc" id="L93">        this.moveUp = false;</span>
+<span class="fc" id="L94">        this.moveRight = false;</span>
+<span class="fc" id="L95">        this.moveDown = false;</span>
+<span class="fc" id="L96">        this.horizontalRight = false;</span>
+<span class="fc" id="L97">        this.facingDirection = &quot;left&quot;;</span>
+<span class="fc" id="L98">    }</span>
+
+    /**
+     * Makes the wizard stop moving left
+    */
+    public void releaseLeft() {
+<span class="fc" id="L104">        this.moveLeft = false;</span>
+<span class="fc" id="L105">        this.horizontalLeft = true;</span>
+<span class="fc" id="L106">    }</span>
+
+    /**
+     * Makes the wizard move up
+    */
+    public void pressUp() {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (moveLeft) {</span>
+<span class="fc" id="L113">            this.releaseLeft();</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        } else if (moveRight) {</span>
+<span class="fc" id="L115">            this.releaseRight();</span>
+        }
+<span class="fc" id="L117">        this.moveLeft = false;</span>
+<span class="fc" id="L118">        this.moveUp = true;</span>
+<span class="fc" id="L119">        this.moveRight = false;</span>
+<span class="fc" id="L120">        this.moveDown = false;</span>
+<span class="fc" id="L121">        this.verticalDown = false;</span>
+<span class="fc" id="L122">        this.facingDirection = &quot;up&quot;;</span>
+<span class="fc" id="L123">    }</span>
+
+    /**
+     * Makes the wizard stop moving up
+    */
+    public void releaseUp() {
+<span class="fc" id="L129">        this.moveUp = false;</span>
+<span class="fc" id="L130">        this.verticalUp = true;</span>
+<span class="fc" id="L131">    }</span>
+
+    /**
+     * Makes the wizard move right
+    */
+    public void pressRight() {
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (moveUp) {</span>
+<span class="fc" id="L138">            this.releaseUp();</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        } else if (moveDown) {</span>
+<span class="fc" id="L140">            this.releaseDown();</span>
+        }
+<span class="fc" id="L142">        this.moveLeft = false;</span>
+<span class="fc" id="L143">        this.moveUp = false;</span>
+<span class="fc" id="L144">        this.moveRight = true;</span>
+<span class="fc" id="L145">        this.moveDown = false;</span>
+<span class="fc" id="L146">        this.horizontalLeft = false;</span>
+<span class="fc" id="L147">        this.facingDirection = &quot;right&quot;;</span>
+<span class="fc" id="L148">    }</span>
+
+    /**
+     * Makes the wizard stop moving right
+    */
+    public void releaseRight() {
+<span class="fc" id="L154">        this.moveRight = false;</span>
+<span class="fc" id="L155">        this.horizontalRight = true;</span>
+<span class="fc" id="L156">    }</span>
+
+    /**
+     * Makes the wizard move down
+    */
+    public void pressDown() {
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if (moveLeft) {</span>
+<span class="fc" id="L163">            this.releaseLeft();</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">        } else if (moveRight) {</span>
+<span class="fc" id="L165">            this.releaseRight();</span>
+        }
+<span class="fc" id="L167">        this.moveLeft = false;</span>
+<span class="fc" id="L168">        this.moveUp = false;</span>
+<span class="fc" id="L169">        this.moveRight = false;</span>
+<span class="fc" id="L170">        this.moveDown = true;</span>
+<span class="fc" id="L171">        this.verticalUp = false;</span>
+<span class="fc" id="L172">        this.facingDirection = &quot;down&quot;;</span>
+<span class="fc" id="L173">    }</span>
+
+    /**
+     * Makes the wizard stop moving down
+    */
+    public void releaseDown() {
+<span class="fc" id="L179">        this.moveDown = false;</span>
+<span class="fc" id="L180">        this.verticalDown = true;</span>
+<span class="fc" id="L181">    }</span>
+
+    /**
+     * Checks for a snowflake collision.
+    */
+    public boolean snowflakeCollision() {
+<span class="fc" id="L187">        int[] snowflakeSides = {this.snowflake.getX(), this.snowflake.getY(), </span>
+<span class="fc" id="L188">                                this.snowflake.getX()+App.SPRITESIZE, </span>
+<span class="fc" id="L189">                                this.snowflake.getY()+App.SPRITESIZE};</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        if (obstacleCollisionIndividual(snowflakeSides, &quot;touching&quot;)) {</span>
+<span class="fc" id="L191">            return true;</span>
+        }
+<span class="fc" id="L193">        return false;</span>
+    }
+
+    /**
+     * Moves the wizard, ensures that when buttons are released, it is moved to a whole tile, and checks for gremlin, slime, door, portal, and snowflake collisions.
+    */
+    public void tick() {
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        if (!this.wallCollision(this.facingDirection)) {</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">            if (moveLeft) {</span>
+<span class="fc" id="L202">                this.x -= this.speed;</span>
+            }
+<span class="fc bfc" id="L204" title="All 2 branches covered.">            if (moveRight) {</span>
+<span class="fc" id="L205">                this.x += this.speed;</span>
+            }
+<span class="fc bfc" id="L207" title="All 2 branches covered.">            if (moveUp) {</span>
+<span class="fc" id="L208">                this.y -= this.speed;</span>
+            }
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            if (moveDown) {</span>
+<span class="fc" id="L211">                this.y += this.speed;</span>
+            }
+        }
+
+        // When horizontal buttons are released, ensure wizard is moved to the next whole tile
+<span class="fc bfc" id="L216" title="All 4 branches covered.">        if (!moveLeft &amp;&amp; !moveRight) {</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">            if (horizontalLeft) {</span>
+<span class="fc" id="L218">                double desiredX = App.SPRITESIZE*Math.floor((double) this.x/App.SPRITESIZE);</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">                if (this.x != desiredX) {</span>
+<span class="fc" id="L220">                    this.x -= this.speed;</span>
+                } else {
+<span class="fc" id="L222">                    horizontalLeft = false;</span>
+                }
+<span class="fc bfc" id="L224" title="All 2 branches covered.">            } else if (horizontalRight) {</span>
+<span class="fc" id="L225">                double desiredX = App.SPRITESIZE*Math.ceil((double) this.x/App.SPRITESIZE);</span>
+<span class="fc bfc" id="L226" title="All 2 branches covered.">                if (this.x != desiredX) {</span>
+<span class="fc" id="L227">                    this.x += this.speed;</span>
+                } else {
+<span class="fc" id="L229">                    horizontalRight = false;</span>
+                }
+            }
+        }
+
+        // When vertical buttons are released, ensure wizard is moved to the next whole tile
+<span class="fc bfc" id="L235" title="All 4 branches covered.">        if (!moveUp &amp;&amp; !moveDown) {</span>
+<span class="fc bfc" id="L236" title="All 2 branches covered.">            if (verticalUp) {</span>
+<span class="fc" id="L237">                double desiredY = App.SPRITESIZE*Math.floor((double) this.y/App.SPRITESIZE);</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">                if (this.y != desiredY) {</span>
+<span class="fc" id="L239">                    this.y -= this.speed;</span>
+                } else {
+<span class="fc" id="L241">                    verticalUp = false;</span>
+                }
+<span class="fc bfc" id="L243" title="All 2 branches covered.">            } else if (verticalDown) {</span>
+<span class="fc" id="L244">                double desiredY = App.SPRITESIZE*Math.ceil((double) this.y/App.SPRITESIZE);</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">                if (this.y != desiredY) {</span>
+<span class="fc" id="L246">                    this.y += this.speed;</span>
+                } else {
+<span class="fc" id="L248">                    verticalDown = false;</span>
+                }
+            }
+        }
+
+<span class="fc bfc" id="L253" title="All 2 branches covered.">        if (this.obstacleCollision(&quot;touching&quot;, this.gremlins) || </span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">            this.obstacleCollision(&quot;touching&quot;, this.slimes)) {</span>
+<span class="fc" id="L255">            this.isAlive = false;</span>
+<span class="fc" id="L256">            Gremlin.resetFreeze();</span>
+<span class="fc" id="L257">            this.snowflake.setCollected(this);</span>
+        }
+
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        if (this.obstacleCollision(&quot;touching&quot;, this.doors)) {</span>
+<span class="fc" id="L261">            this.goNextLevel = true;</span>
+<span class="fc" id="L262">            Gremlin.resetFreeze();</span>
+<span class="fc" id="L263">            this.snowflake.setCollected(this);</span>
+        }
+
+<span class="pc bpc" id="L266" title="1 of 6 branches missed.">        if (this.portals.size() &gt;= 2 &amp;&amp; this.obstacleCollision(&quot;touching&quot;, this.portals) </span>
+            &amp;&amp; this.readyForPortal) {
+<span class="fc" id="L268">            StationaryObject collidedPortal = this.portals.get(this.collidedObstacleIndex);</span>
+<span class="fc" id="L269">            this.portals.remove(collidedPortal);</span>
+<span class="fc" id="L270">            int newPortalIndex = App.randomGenerator.nextInt(this.portals.size());</span>
+<span class="fc" id="L271">            StationaryObject newPortal = this.portals.get(newPortalIndex);</span>
+<span class="fc" id="L272">            this.portals.add(collidedPortal);</span>
+
+<span class="fc" id="L274">            this.readyForPortal = false;</span>
+<span class="fc" id="L275">            this.x = newPortal.getX();</span>
+<span class="fc" id="L276">            this.y = newPortal.getY();</span>
+        }
+
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        if (!this.obstacleCollision(&quot;touching&quot;, this.portals)) {</span>
+<span class="fc" id="L280">            this.readyForPortal = true;</span>
+        }
+
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        if (this.snowflakeCollision()) {</span>
+<span class="fc" id="L284">            this.snowflake.setCollected(this);</span>
+<span class="fc" id="L285">            Gremlin.freeze();</span>
+        }
+<span class="fc" id="L287">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

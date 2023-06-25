@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="gremlins.WizardTest" tests="18" skipped="0" failures="0" errors="0" timestamp="2022-10-25T11:47:55" hostname="Cohens-Air" time="6.842">
+  <properties/>
+  <testcase name="TouchSnowflakeTest()" classname="gremlins.WizardTest" time="0.0"/>
+  <testcase name="getDirectionTest()" classname="gremlins.WizardTest" time="0.0"/>
+  <testcase name="constructor()" classname="gremlins.WizardTest" time="0.001"/>
+  <testcase name="getIsAliveTest()" classname="gremlins.WizardTest" time="0.035"/>
+  <testcase name="TouchDoorTest()" classname="gremlins.WizardTest" time="0.052"/>
+  <testcase name="pressRightTest()" classname="gremlins.WizardTest" time="1.699"/>
+  <testcase name="UpMovementTest()" classname="gremlins.WizardTest" time="0.002"/>
+  <testcase name="RightMovementTest()" classname="gremlins.WizardTest" time="0.001"/>
+  <testcase name="DownMovementTest()" classname="gremlins.WizardTest" time="0.001"/>
+  <testcase name="pressDownTest()" classname="gremlins.WizardTest" time="1.652"/>
+  <testcase name="TouchSlimeTest()" classname="gremlins.WizardTest" time="0.004"/>
+  <testcase name="getGoNextLevelTest()" classname="gremlins.WizardTest" time="0.009"/>
+  <testcase name="pressLeftTest()" classname="gremlins.WizardTest" time="1.417"/>
+  <testcase name="setFiredTest()" classname="gremlins.WizardTest" time="0.001"/>
+  <testcase name="LeftMovementTest()" classname="gremlins.WizardTest" time="0.001"/>
+  <testcase name="TouchGremlinTest()" classname="gremlins.WizardTest" time="0.001"/>
+  <testcase name="TouchPortalTest()" classname="gremlins.WizardTest" time="0.0"/>
+  <testcase name="pressUpTest()" classname="gremlins.WizardTest" time="1.802"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[java.util.ConcurrentModificationException
+	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:911)
+	at java.util.ArrayList$Itr.next(ArrayList.java:861)
+	at gremlins.App.evaluateBrickwalls(App.java:258)
+	at gremlins.App.draw(App.java:402)
+	at processing.core.PApplet.handleDraw(PApplet.java:2426)
+	at processing.awt.PSurfaceAWT$12.callDraw(PSurfaceAWT.java:1557)
+	at processing.core.PSurfaceNone$AnimationThread.run(PSurfaceNone.java:316)
+]]></system-err>
+</testsuite>

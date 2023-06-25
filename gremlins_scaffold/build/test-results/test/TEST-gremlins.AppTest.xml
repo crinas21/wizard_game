@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="gremlins.AppTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2022-10-25T11:47:34" hostname="Cohens-Air" time="17.07">
+  <properties/>
+  <testcase name="evaluateGremlinsTest()" classname="gremlins.AppTest" time="3.336"/>
+  <testcase name="evaluateSlimesTest()" classname="gremlins.AppTest" time="0.835"/>
+  <testcase name="constructor()" classname="gremlins.AppTest" time="0.003"/>
+  <testcase name="spacePressTest()" classname="gremlins.AppTest" time="0.699"/>
+  <testcase name="lostLifeTest()" classname="gremlins.AppTest" time="1.977"/>
+  <testcase name="keyReleasedTest()" classname="gremlins.AppTest" time="0.629"/>
+  <testcase name="evaluateFireballsTest()" classname="gremlins.AppTest" time="0.646"/>
+  <testcase name="nextLevelTest()" classname="gremlins.AppTest" time="0.96"/>
+  <testcase name="evaluateBrickwallsTest()" classname="gremlins.AppTest" time="0.178"/>
+  <testcase name="anyKeyPressedGameOverTest()" classname="gremlins.AppTest" time="2.696"/>
+  <testcase name="drawLayoutTest()" classname="gremlins.AppTest" time="1.994"/>
+  <testcase name="anyKeyPressedGameWonTest()" classname="gremlins.AppTest" time="1.849"/>
+  <testcase name="setupTest()" classname="gremlins.AppTest" time="1.236"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[Warning: the fonts "Times" and "Lucida Bright" are not available for the Java logical font "Serif", which may have unexpected appearance or behavior. Re-enable the "Times" font to remove this warning.
+Warning: the fonts "Times" and "Lucida Bright" are not available for the Java logical font "Serif", which may have unexpected appearance or behavior. Re-enable the "Times" font to remove this warning.
+java.util.ConcurrentModificationException
+	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:911)
+	at java.util.ArrayList$Itr.next(ArrayList.java:861)
+	at gremlins.App.draw(App.java:386)
+	at processing.core.PApplet.handleDraw(PApplet.java:2426)
+	at processing.awt.PSurfaceAWT$12.callDraw(PSurfaceAWT.java:1557)
+	at processing.core.PSurfaceNone$AnimationThread.run(PSurfaceNone.java:316)
+java.util.ConcurrentModificationException
+	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:911)
+	at java.util.ArrayList$Itr.next(ArrayList.java:861)
+	at gremlins.App.evaluateBrickwalls(App.java:258)
+	at gremlins.App.draw(App.java:402)
+	at processing.core.PApplet.handleDraw(PApplet.java:2426)
+	at processing.awt.PSurfaceAWT$12.callDraw(PSurfaceAWT.java:1557)
+	at processing.core.PSurfaceNone$AnimationThread.run(PSurfaceNone.java:316)
+java.util.ConcurrentModificationException
+	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:911)
+	at java.util.ArrayList$Itr.next(ArrayList.java:861)
+	at gremlins.App.draw(App.java:386)
+	at processing.core.PApplet.handleDraw(PApplet.java:2426)
+	at processing.awt.PSurfaceAWT$12.callDraw(PSurfaceAWT.java:1557)
+	at processing.core.PSurfaceNone$AnimationThread.run(PSurfaceNone.java:316)
+java.util.ConcurrentModificationException
+	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:911)
+	at java.util.ArrayList$Itr.next(ArrayList.java:861)
+	at gremlins.App.draw(App.java:386)
+	at processing.core.PApplet.handleDraw(PApplet.java:2426)
+	at processing.awt.PSurfaceAWT$12.callDraw(PSurfaceAWT.java:1557)
+	at processing.core.PSurfaceNone$AnimationThread.run(PSurfaceNone.java:316)
+java.util.ConcurrentModificationException
+	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:911)
+	at java.util.ArrayList$Itr.next(ArrayList.java:861)
+	at gremlins.App.draw(App.java:386)
+	at processing.core.PApplet.handleDraw(PApplet.java:2426)
+	at processing.awt.PSurfaceAWT$12.callDraw(PSurfaceAWT.java:1557)
+	at processing.core.PSurfaceNone$AnimationThread.run(PSurfaceNone.java:316)
+java.util.ConcurrentModificationException
+	at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:911)
+	at java.util.ArrayList$Itr.next(ArrayList.java:861)
+	at gremlins.App.draw(App.java:386)
+	at processing.core.PApplet.handleDraw(PApplet.java:2426)
+	at processing.awt.PSurfaceAWT$12.callDraw(PSurfaceAWT.java:1557)
+	at processing.core.PSurfaceNone$AnimationThread.run(PSurfaceNone.java:316)
+]]></system-err>
+</testsuite>

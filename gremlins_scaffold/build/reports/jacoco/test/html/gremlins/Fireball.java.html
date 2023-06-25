@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Fireball.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">Fireball.java</span></div><h1>Fireball.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import java.util.ArrayList;
+
+public class Fireball extends MovingObject implements Projectile {
+
+    protected ArrayList&lt;Gremlin&gt; gremlins;
+    protected ArrayList&lt;Slime&gt; slimes;
+    protected String direction;
+    protected boolean collided;
+
+    public Fireball(int x, int y, ArrayList&lt;StationaryObject&gt; stonewalls, 
+                    ArrayList&lt;Brickwall&gt; brickwalls, ArrayList&lt;Gremlin&gt; gremlins, 
+                    ArrayList&lt;Slime&gt; slimes, String direction) {
+<span class="fc" id="L15">        super(x, y, stonewalls, brickwalls, 4);</span>
+<span class="fc" id="L16">        this.gremlins = gremlins;</span>
+<span class="fc" id="L17">        this.slimes = slimes;</span>
+<span class="fc" id="L18">        this.direction = direction;</span>
+<span class="fc" id="L19">        this.collided = false;</span>
+<span class="fc" id="L20">    }</span>
+
+    /**
+     * Gives the fireball's current direction.
+    */
+    public String getDirection() {
+<span class="fc" id="L26">        return this.direction;</span>
+    }
+
+    /**
+     * Tells whether or not the fireball has collided with something.
+    */
+    public boolean getCollided() {
+<span class="fc" id="L33">        return this.collided;</span>
+    }
+
+    /**
+     * Moves the fireball and checks for wall, gremlin, and slime collisions.
+    */
+    public void tick() {
+<span class="fc" id="L40">        this.move(this.direction);</span>
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (this.obstacleCollision(direction, this.brickwalls)) {</span>
+<span class="fc" id="L43">            this.brickwalls.get(this.collidedObstacleIndex).destroyBrickwall();</span>
+        }
+
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (this.wallCollision(direction)) {</span>
+<span class="fc" id="L47">            this.collided = true;</span>
+        }
+
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (this.obstacleCollision(&quot;touching&quot;, this.gremlins)) {</span>
+<span class="fc" id="L51">            this.gremlins.get(this.collidedObstacleIndex).kill();</span>
+<span class="fc" id="L52">            this.collided = true;</span>
+        }
+
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (this.obstacleCollision(&quot;touching&quot;, this.slimes)) {</span>
+<span class="fc" id="L56">            this.slimes.get(this.collidedObstacleIndex).breakSlime();</span>
+<span class="fc" id="L57">            this.collided = true;</span>
+        }
+<span class="fc" id="L59">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

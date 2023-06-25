@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="gremlins.MovingObjectTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2022-10-25T11:47:54" hostname="Cohens-Air" time="0.121">
+  <properties/>
+  <testcase name="inObstacleRangeTest()" classname="gremlins.MovingObjectTest" time="0.001"/>
+  <testcase name="wallCollisionTest()" classname="gremlins.MovingObjectTest" time="0.002"/>
+  <testcase name="findObjectRangeXTest()" classname="gremlins.MovingObjectTest" time="0.107"/>
+  <testcase name="findObjectRangeYTest()" classname="gremlins.MovingObjectTest" time="0.001"/>
+  <testcase name="moveTest()" classname="gremlins.MovingObjectTest" time="0.001"/>
+  <testcase name="obstacleCollisionTest()" classname="gremlins.MovingObjectTest" time="0.0"/>
+  <testcase name="obstacleCollisionIndividualTest()" classname="gremlins.MovingObjectTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

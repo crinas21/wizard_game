@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Gremlin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gremlins_scaffold</a> &gt; <a href="index.source.html" class="el_package">gremlins</a> &gt; <span class="el_source">Gremlin.java</span></div><h1>Gremlin.java</h1><pre class="source lang-java linenums">package gremlins;
+
+import java.util.*;
+
+public class Gremlin extends MovingObject {
+
+<span class="fc" id="L7">    private static final String[] directions = {&quot;left&quot;, &quot;up&quot;, &quot;right&quot;, &quot;down&quot;};</span>
+    protected Wizard wizard;
+    protected ArrayList&lt;StationaryObject&gt; emptyspaces;
+    protected static int numGremlins;
+    protected static boolean frozen;
+    protected static int frozenTimer;
+    protected int directionIndex;
+    protected String direction;
+
+    public Gremlin(int x, int y, ArrayList&lt;StationaryObject&gt; stonewalls,
+                    ArrayList&lt;Brickwall&gt; brickwalls, Wizard wizard,
+                    ArrayList&lt;StationaryObject&gt; emptyspaces) {
+<span class="fc" id="L19">        super(x, y, stonewalls, brickwalls, 1);</span>
+<span class="fc" id="L20">        this.wizard = wizard;</span>
+<span class="fc" id="L21">        this.emptyspaces = emptyspaces;</span>
+<span class="fc" id="L22">        this.directionIndex = App.randomGenerator.nextInt(directions.length);</span>
+<span class="fc" id="L23">        frozen = false;</span>
+<span class="fc" id="L24">        frozenTimer = 0;</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Checks whether Gremlins are frozen.
+    */
+    public static boolean getFrozen() {
+<span class="fc" id="L31">        return frozen;</span>
+    }
+
+    /**
+     * Gives the frozen timer for Gremlins.
+    */
+    public static int getFrozenTimer() {
+<span class="fc" id="L38">        return frozenTimer;</span>
+    }
+
+    /**
+     * Sets the Gremlins to be frozen.
+    */
+    public static void freeze() {
+<span class="fc" id="L45">        frozen = true;</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Sets the Gremlins to be unfrozen.
+    */
+    public static void resetFreeze() {
+<span class="fc" id="L52">        frozen = false;</span>
+<span class="fc" id="L53">        frozenTimer = 0;</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * Passes in the number of gremlins.
+     * @param   gremlins    Number of gremlins for the level.
+    */
+    public static void giveNumGremlins(int gremlins) {
+<span class="fc" id="L61">        numGremlins = gremlins;</span>
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * Gives the evaluated direction index for a gremlin between 0 and 3, looping back around if the index passed is greater than 3.
+     * @param   index   The gremlin's yet-to-be evaluated direction index from tick().
+    */
+    protected int getDirectionIndex(int index) {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        if (index &gt; 3) {</span>
+<span class="fc" id="L70">            return index - 4;</span>
+        } else {
+<span class="fc" id="L72">            return index;</span>
+        }
+    }
+
+    /**
+     * Gives the gremlin's current direction.
+    */
+    public String getDirection() {
+<span class="fc" id="L80">        return this.direction;</span>
+    }
+
+    /**
+     * Passes in the wizard.
+     * @param   wiz The wizard used in the game(player) which is used to know where the gremlins should respawn when killed.
+    */
+    public void giveWizard(Wizard wiz) {
+<span class="fc" id="L88">        this.wizard = wiz;</span>
+<span class="fc" id="L89">    }</span>
+
+    /**
+     * Runs when a fireball touches a gremlin. Makes the gremlin respawn on an empty tile that is at least 10 tiles away from the wizard.
+    */
+    public void kill() {
+        // Find all empty spaces that are at least 10 spaces away from the player and store in validSpaces
+<span class="fc" id="L96">        ArrayList&lt;StationaryObject&gt; validSpaces = new ArrayList&lt;StationaryObject&gt;();</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        for (StationaryObject emptyspace : this.emptyspaces) {</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">            if ((emptyspace.getX() &lt; this.wizard.getX() - 10*App.SPRITESIZE || </span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                emptyspace.getX() &gt; this.wizard.getX() + 10*App.SPRITESIZE) &amp;&amp; </span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">                (emptyspace.getY() &lt; this.wizard.getY() - 10*App.SPRITESIZE || </span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                emptyspace.getY() &gt; this.wizard.getY() +10*App.SPRITESIZE)) {</span>
+<span class="fc" id="L102">                validSpaces.add(emptyspace);</span>
+            }
+<span class="fc" id="L104">        }</span>
+
+<span class="fc" id="L106">        int index = App.randomGenerator.nextInt(validSpaces.size());</span>
+<span class="fc" id="L107">        StationaryObject newSpace = validSpaces.get(index);</span>
+<span class="fc" id="L108">        this.x = newSpace.getX();</span>
+<span class="fc" id="L109">        this.y = newSpace.getY();</span>
+<span class="fc" id="L110">    }</span>
+
+    /**
+     * Moves the gremlin, checks for wall collisions and decides which new direction to go.
+     * Checks for frozen.
+    */
+    public void tick() {
+<span class="fc" id="L117">        this.direction = directions[this.directionIndex];</span>
+
+<span class="fc bfc" id="L119" title="All 4 branches covered.">        if (!this.wallCollision(this.direction) &amp;&amp; !frozen) {</span>
+<span class="fc" id="L120">            this.move(this.direction);</span>
+        } else {
+<span class="fc" id="L122">            int adjacentDirectionIndex1 = getDirectionIndex(this.directionIndex+1);</span>
+<span class="fc" id="L123">            String adjacentDirection1 = directions[adjacentDirectionIndex1];</span>
+<span class="fc" id="L124">            int adjacentDirectionIndex2 = getDirectionIndex(this.directionIndex+3);</span>
+<span class="fc" id="L125">            String adjacentDirection2 = directions[adjacentDirectionIndex2];</span>
+
+             // If gremlin meets a dead end, new direction is back the way it came
+<span class="fc bfc" id="L128" title="All 4 branches covered.">            if (this.wallCollision(adjacentDirection1) &amp;&amp; this.wallCollision(adjacentDirection2)) {</span>
+<span class="fc" id="L129">                this.directionIndex = getDirectionIndex(this.directionIndex+2);</span>
+            }
+            // If gremlin meets a wall with only one direction to go, go that way
+<span class="fc bfc" id="L132" title="All 2 branches covered.">            else if (!this.wallCollision(adjacentDirection1) &amp;&amp; </span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">                    this.wallCollision(adjacentDirection2)) {</span>
+<span class="fc" id="L134">                this.directionIndex = adjacentDirectionIndex1;</span>
+            }
+            // If gremlin meets a wall with only one direction to go, go that way
+<span class="fc bfc" id="L137" title="All 2 branches covered.">            else if (this.wallCollision(adjacentDirection1) &amp;&amp; </span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                    !this.wallCollision(adjacentDirection2)) {</span>
+<span class="fc" id="L139">                this.directionIndex = adjacentDirectionIndex2;</span>
+            }
+            // If gremlin meets a T-intersection, choose a random direction
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            else if (!this.wallCollision(adjacentDirection1) &amp;&amp; </span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">                    !this.wallCollision(adjacentDirection2)) {</span>
+<span class="fc" id="L144">                int[] tempIndexes = {adjacentDirectionIndex1, adjacentDirectionIndex2};</span>
+<span class="fc" id="L145">                this.directionIndex = tempIndexes[App.randomGenerator.nextInt(tempIndexes.length)];</span>
+            }
+        }
+
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if (frozen) {</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if (frozenTimer &gt;= 5 * numGremlins * App.FPS) {</span>
+<span class="fc" id="L151">                resetFreeze();</span>
+            } else {
+<span class="fc" id="L153">                frozenTimer++;</span>
+            }
+        }
+<span class="fc" id="L156">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

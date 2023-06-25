@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="gremlins.SlimeTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2022-10-25T11:47:55" hostname="Cohens-Air" time="0.041">
+  <properties/>
+  <testcase name="breakSlimeTest()" classname="gremlins.SlimeTest" time="0.002"/>
+  <testcase name="getDirectionTest()" classname="gremlins.SlimeTest" time="0.005"/>
+  <testcase name="constructor()" classname="gremlins.SlimeTest" time="0.002"/>
+  <testcase name="wallCollisionTest()" classname="gremlins.SlimeTest" time="0.0"/>
+  <testcase name="movementTest()" classname="gremlins.SlimeTest" time="0.0"/>
+  <testcase name="getCollidedTest()" classname="gremlins.SlimeTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
